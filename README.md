@@ -1,8 +1,6 @@
 # Gemini CLI_ex
 
-> **Note:** This project is a fork of [google/gemini-cli](https://github.com/google-gemini/gemini-cli) extended to support Groq. The implementation approach references [Riti0208/gemini-cli-local](https://github.com/Riti0208/gemini-cli-local).
-
-Gemini CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.
+This project is a fork of [google/gemini-cli](https://github.com/google-gemini/gemini-cli) extended to support Groq. The implementation approach references [Riti0208/gemini-cli-local](https://github.com/Riti0208/gemini-cli-local).
 
 ## 📦 Installation
 
