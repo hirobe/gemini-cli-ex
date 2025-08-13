@@ -391,7 +391,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
                 const candidates: Candidate[] = [{
                   content: {
                     role: 'model',
-                    parts: [{ text: accumulatedContent }],
+                    parts: [{ text: delta.content }],  // Send only the delta, not accumulated
                   },
                   finishReason: (chunk.choices[0].finish_reason || undefined) as FinishReason | undefined,
                   index: 0,
@@ -429,6 +429,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
       }
     }
 
+    // If we have tool calls, send them with the accumulated content
     if (toolCalls.size > 0) {
       const parts: Part[] = [];
       if (accumulatedContent) {
@@ -454,6 +455,8 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
       }];
       yield this.createGenerateContentResponse(candidates, {});
     }
+    // Note: For text-only responses, we don't need to send a final accumulated response
+    // because each delta is sent individually during streaming
   }
 
   async countTokens(request: CountTokensParameters): Promise<CountTokensResponse> {
