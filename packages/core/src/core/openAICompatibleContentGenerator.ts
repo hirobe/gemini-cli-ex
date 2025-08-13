@@ -141,7 +141,8 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     for (const item of contentArray) {
       // Type guard to check if it's a Content object
       if (typeof item === 'object' && 'role' in item && 'parts' in item) {
-        const role = item.role === 'model' ? 'assistant' : (item.role as string);
+        const role =
+          item.role === 'model' ? 'assistant' : (item.role as string);
 
         if (!item.parts || item.parts.length === 0) {
           continue;
