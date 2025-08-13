@@ -89,7 +89,8 @@ export function createContentGeneratorConfig(
 
   if (authType === AuthType.USE_GROQ && groqApiKey) {
     contentGeneratorConfig.groqApiKey = groqApiKey;
-    contentGeneratorConfig.model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+    contentGeneratorConfig.model =
+      process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
     return contentGeneratorConfig;
   }
 
@@ -129,7 +130,7 @@ export async function createContentGenerator(
       'User-Agent': `GeminiCLI/${version} (${process.platform}; ${process.arch})`,
     },
   };
-  
+
   if (config.authType === AuthType.USE_GROQ) {
     const openAICompatibleGenerator = new OpenAICompatibleContentGenerator({
       apiUrl: 'https://api.groq.com/openai/v1',
@@ -139,7 +140,7 @@ export async function createContentGenerator(
     });
     return new LoggingContentGenerator(openAICompatibleGenerator, gcConfig);
   }
-  
+
   if (
     config.authType === AuthType.LOGIN_WITH_GOOGLE ||
     config.authType === AuthType.CLOUD_SHELL

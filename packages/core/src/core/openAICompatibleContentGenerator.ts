@@ -2,7 +2,7 @@
  * @license
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
- * 
+ *
  * OpenAI-compatible API Content Generator
  * Supports various OpenAI-compatible APIs including Groq, Ollama, etc.
  */
@@ -129,7 +129,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
 
   private convertContentToOpenAI(content: ContentListUnion): OpenAIMessage[] {
     const messages: OpenAIMessage[] = [];
-    
+
     // Handle string content
     if (typeof content === 'string') {
       messages.push({
@@ -138,14 +138,14 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
       });
       return messages;
     }
-    
+
     // Handle Content array or single Content
     const contentArray = Array.isArray(content) ? content : [content];
     for (const item of contentArray) {
       // Type guard to check if it's a Content object
       if (typeof item === 'object' && 'role' in item && 'parts' in item) {
-        const role = item.role === 'model' ? 'assistant' : item.role as any;
-        
+        const role = item.role === 'model' ? 'assistant' : (item.role as any);
+
         if (!item.parts || item.parts.length === 0) {
           continue;
         }
@@ -160,14 +160,16 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
             const fc = part.functionCall as FunctionCall;
             messages.push({
               role: 'assistant',
-              tool_calls: [{
-                id: `call_${Date.now()}`,
-                type: 'function',
-                function: {
-                  name: fc.name || '',
-                  arguments: JSON.stringify(fc.args || {}),
+              tool_calls: [
+                {
+                  id: `call_${Date.now()}`,
+                  type: 'function',
+                  function: {
+                    name: fc.name || '',
+                    arguments: JSON.stringify(fc.args || {}),
+                  },
                 },
-              }],
+              ],
             });
           } else if ('functionResponse' in part) {
             const fr = part.functionResponse as FunctionResponse;
@@ -180,11 +182,15 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
         }
       }
     }
-    
+
     return messages;
   }
 
-  private createGenerateContentResponse(candidates: Candidate[], promptFeedback: any, usageMetadata?: any): GenerateContentResponse {
+  private createGenerateContentResponse(
+    candidates: Candidate[],
+    promptFeedback: any,
+    usageMetadata?: any,
+  ): GenerateContentResponse {
     const response = new GenerateContentResponse();
     response.candidates = candidates;
     response.promptFeedback = promptFeedback;
@@ -194,16 +200,18 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     return response;
   }
 
-  private convertOpenAIToContent(openAIResponse: OpenAIResponse): GenerateContentResponse {
+  private convertOpenAIToContent(
+    openAIResponse: OpenAIResponse,
+  ): GenerateContentResponse {
     const parts: Part[] = [];
-    
+
     if (openAIResponse.choices[0]?.message) {
       const message = openAIResponse.choices[0].message;
-      
+
       if (message.content) {
         parts.push({ text: message.content });
       }
-      
+
       if (message.tool_calls && message.tool_calls.length > 0) {
         for (const toolCall of message.tool_calls) {
           parts.push({
@@ -216,20 +224,25 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
       }
     }
 
-    const candidates: Candidate[] = [{
-      content: {
-        role: 'model',
-        parts,
+    const candidates: Candidate[] = [
+      {
+        content: {
+          role: 'model',
+          parts,
+        },
+        finishReason: (openAIResponse.choices[0]?.finish_reason ||
+          'STOP') as FinishReason,
+        index: 0,
       },
-      finishReason: (openAIResponse.choices[0]?.finish_reason || 'STOP') as FinishReason,
-      index: 0,
-    }];
+    ];
 
-    const usageMetadata = openAIResponse.usage ? {
-      promptTokenCount: openAIResponse.usage.prompt_tokens,
-      candidatesTokenCount: openAIResponse.usage.completion_tokens,
-      totalTokenCount: openAIResponse.usage.total_tokens,
-    } : undefined;
+    const usageMetadata = openAIResponse.usage
+      ? {
+          promptTokenCount: openAIResponse.usage.prompt_tokens,
+          candidatesTokenCount: openAIResponse.usage.completion_tokens,
+          totalTokenCount: openAIResponse.usage.total_tokens,
+        }
+      : undefined;
 
     return this.createGenerateContentResponse(candidates, {}, usageMetadata);
   }
@@ -239,7 +252,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     userPromptId: string,
   ): Promise<GenerateContentResponse> {
     const messages = this.convertContentToOpenAI(request.contents);
-    
+
     const openAIRequest: OpenAIRequest = {
       model: this.model,
       messages,
@@ -250,11 +263,17 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     };
 
     if (this.supportsTools && request.config?.tools) {
-      const tools = Array.isArray(request.config.tools) ? request.config.tools : [request.config.tools];
+      const tools = Array.isArray(request.config.tools)
+        ? request.config.tools
+        : [request.config.tools];
       if (tools.length > 0) {
         openAIRequest.tools = [];
         for (const tool of tools) {
-          if (typeof tool === 'object' && 'functionDeclarations' in tool && tool.functionDeclarations) {
+          if (
+            typeof tool === 'object' &&
+            'functionDeclarations' in tool &&
+            tool.functionDeclarations
+          ) {
             for (const func of tool.functionDeclarations) {
               openAIRequest.tools.push({
                 type: 'function',
@@ -273,7 +292,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    
+
     if (this.apiKey) {
       headers['Authorization'] = `Bearer ${this.apiKey}`;
     }
@@ -306,7 +325,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     userPromptId: string,
   ): AsyncGenerator<GenerateContentResponse> {
     const messages = this.convertContentToOpenAI(request.contents);
-    
+
     const openAIRequest: OpenAIRequest = {
       model: this.model,
       messages,
@@ -317,11 +336,17 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     };
 
     if (this.supportsTools && request.config?.tools) {
-      const tools = Array.isArray(request.config.tools) ? request.config.tools : [request.config.tools];
+      const tools = Array.isArray(request.config.tools)
+        ? request.config.tools
+        : [request.config.tools];
       if (tools.length > 0) {
         openAIRequest.tools = [];
         for (const tool of tools) {
-          if (typeof tool === 'object' && 'functionDeclarations' in tool && tool.functionDeclarations) {
+          if (
+            typeof tool === 'object' &&
+            'functionDeclarations' in tool &&
+            tool.functionDeclarations
+          ) {
             for (const func of tool.functionDeclarations) {
               openAIRequest.tools.push({
                 type: 'function',
@@ -340,7 +365,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    
+
     if (this.apiKey) {
       headers['Authorization'] = `Bearer ${this.apiKey}`;
     }
@@ -379,26 +404,29 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
         if (line.startsWith('data: ')) {
           const data = line.slice(6);
           if (data === '[DONE]') continue;
-          
+
           try {
             const chunk: OpenAIStreamChunk = JSON.parse(data);
-            
+
             if (chunk.choices[0]?.delta) {
               const delta = chunk.choices[0].delta;
-              
+
               if (delta.content) {
                 accumulatedContent += delta.content;
-                const candidates: Candidate[] = [{
-                  content: {
-                    role: 'model',
-                    parts: [{ text: delta.content }],  // Send only the delta, not accumulated
+                const candidates: Candidate[] = [
+                  {
+                    content: {
+                      role: 'model',
+                      parts: [{ text: delta.content }], // Send only the delta, not accumulated
+                    },
+                    finishReason: (chunk.choices[0].finish_reason ||
+                      undefined) as FinishReason | undefined,
+                    index: 0,
                   },
-                  finishReason: (chunk.choices[0].finish_reason || undefined) as FinishReason | undefined,
-                  index: 0,
-                }];
+                ];
                 yield this.createGenerateContentResponse(candidates, {});
               }
-              
+
               if (delta.tool_calls) {
                 for (const toolCall of delta.tool_calls) {
                   if (!toolCalls.has(toolCall.index)) {
@@ -411,7 +439,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
                       },
                     });
                   }
-                  
+
                   const existing = toolCalls.get(toolCall.index);
                   if (toolCall.function?.name) {
                     existing.function.name = toolCall.function.name;
@@ -435,7 +463,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
       if (accumulatedContent) {
         parts.push({ text: accumulatedContent });
       }
-      
+
       for (const toolCall of toolCalls.values()) {
         parts.push({
           functionCall: {
@@ -444,45 +472,61 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
           },
         });
       }
-      
-      const candidates: Candidate[] = [{
-        content: {
-          role: 'model',
-          parts,
+
+      const candidates: Candidate[] = [
+        {
+          content: {
+            role: 'model',
+            parts,
+          },
+          finishReason: 'STOP' as FinishReason,
+          index: 0,
         },
-        finishReason: 'STOP' as FinishReason,
-        index: 0,
-      }];
+      ];
       yield this.createGenerateContentResponse(candidates, {});
     }
     // Note: For text-only responses, we don't need to send a final accumulated response
     // because each delta is sent individually during streaming
   }
 
-  async countTokens(request: CountTokensParameters): Promise<CountTokensResponse> {
+  async countTokens(
+    request: CountTokensParameters,
+  ): Promise<CountTokensResponse> {
     let text = '';
-    
+
     if (typeof request.contents === 'string') {
       text = request.contents;
     } else if (Array.isArray(request.contents)) {
       text = request.contents
         .filter((c): c is Content => typeof c === 'object' && 'parts' in c)
-        .map(c => 
-          c.parts ? c.parts.map((p: any) => 'text' in p ? p.text : '').join(' ') : ''
-        ).join(' ');
-    } else if (typeof request.contents === 'object' && 'parts' in request.contents) {
-      text = request.contents.parts ? request.contents.parts.map((p: any) => 'text' in p ? p.text : '').join(' ') : '';
+        .map((c) =>
+          c.parts
+            ? c.parts.map((p: any) => ('text' in p ? p.text : '')).join(' ')
+            : '',
+        )
+        .join(' ');
+    } else if (
+      typeof request.contents === 'object' &&
+      'parts' in request.contents
+    ) {
+      text = request.contents.parts
+        ? request.contents.parts
+            .map((p: any) => ('text' in p ? p.text : ''))
+            .join(' ')
+        : '';
     }
-    
+
     const estimatedTokens = Math.ceil(text.length / 4);
-    
+
     return {
       totalTokens: estimatedTokens,
       cachedContentTokenCount: 0,
     };
   }
 
-  async embedContent(request: EmbedContentParameters): Promise<EmbedContentResponse> {
+  async embedContent(
+    request: EmbedContentParameters,
+  ): Promise<EmbedContentResponse> {
     throw new Error('Embeddings not supported for OpenAI-compatible API');
   }
 }

@@ -76,6 +76,7 @@ Choose the authentication method that best fits your needs:
 **✨ Best for:** Developers who want ultra-fast inference with competitive pricing
 
 **Benefits:**
+
 - **Lightning fast inference** - Industry-leading speed with Groq's LPU technology
 - **Competitive pricing** - Cost-effective compared to other cloud providers
 - **High-quality models** - Access to Llama, Mixtral, and other open models
@@ -95,6 +96,7 @@ gemini
 ```
 
 Available models:
+
 - `llama-3.3-70b-versatile` - Latest Llama 3.3 70B (recommended)
 - `llama-3.2-90b-vision-preview` - Multimodal capable
 - `mixtral-8x7b-32768` - Fast and efficient
