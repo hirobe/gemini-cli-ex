@@ -19,6 +19,7 @@ import { Config } from '../config/config.js';
 import { getEffectiveModel } from './modelCheck.js';
 import { UserTierId } from '../code_assist/types.js';
 import { LoggingContentGenerator } from './loggingContentGenerator.js';
+import { OpenAIContentGenerator } from './openaiContentGenerator.js';
 
 /**
  * Interface abstracting the core functionalities for generating content and counting tokens.
@@ -46,6 +47,7 @@ export enum AuthType {
   USE_GEMINI = 'gemini-api-key',
   USE_VERTEX_AI = 'vertex-ai',
   CLOUD_SHELL = 'cloud-shell',
+  USE_OLLAMA = 'ollama',
 }
 
 export type ContentGeneratorConfig = {
@@ -54,6 +56,8 @@ export type ContentGeneratorConfig = {
   vertexai?: boolean;
   authType?: AuthType | undefined;
   proxy?: string | undefined;
+  ollamaUrl?: string;
+  ollamaSupportsTools?: boolean;
 };
 
 export function createContentGeneratorConfig(
@@ -64,6 +68,8 @@ export function createContentGeneratorConfig(
   const googleApiKey = process.env.GOOGLE_API_KEY || undefined;
   const googleCloudProject = process.env.GOOGLE_CLOUD_PROJECT || undefined;
   const googleCloudLocation = process.env.GOOGLE_CLOUD_LOCATION || undefined;
+  const ollamaUrl = process.env.OLLAMA_URL || undefined;
+  const ollamaModel = process.env.OLLAMA_MODEL || undefined;
 
   // Use runtime model from config if available; otherwise, fall back to parameter or default
   const effectiveModel = config.getModel() || DEFAULT_GEMINI_MODEL;
@@ -79,6 +85,13 @@ export function createContentGeneratorConfig(
     authType === AuthType.LOGIN_WITH_GOOGLE ||
     authType === AuthType.CLOUD_SHELL
   ) {
+    return contentGeneratorConfig;
+  }
+
+  if (authType === AuthType.USE_OLLAMA) {
+    contentGeneratorConfig.ollamaUrl = ollamaUrl || 'http://gine:11434/v1';
+    contentGeneratorConfig.model = ollamaModel || 'PetrosStav/gemma3-tools:27b';
+    contentGeneratorConfig.ollamaSupportsTools = process.env.OLLAMA_SUPPORTS_TOOLS === 'true';
     return contentGeneratorConfig;
   }
 
@@ -118,6 +131,17 @@ export async function createContentGenerator(
       'User-Agent': `GeminiCLI/${version} (${process.platform}; ${process.arch})`,
     },
   };
+  
+  if (config.authType === AuthType.USE_OLLAMA) {
+    const openAIGenerator = new OpenAIContentGenerator({
+      apiUrl: config.ollamaUrl || 'http://gine:11434/v1',
+      model: config.model,
+      apiKey: config.apiKey,
+      supportsTools: config.ollamaSupportsTools ?? true,
+    });
+    return new LoggingContentGenerator(openAIGenerator, gcConfig);
+  }
+  
   if (
     config.authType === AuthType.LOGIN_WITH_GOOGLE ||
     config.authType === AuthType.CLOUD_SHELL

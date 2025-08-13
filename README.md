@@ -1,4 +1,4 @@
-# Gemini CLI
+# Gemini CLI_ex
 
 [![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/npm/v/@google/gemini-cli)](https://www.npmjs.com/package/@google/gemini-cli)
@@ -71,7 +71,33 @@ With Gemini CLI you can:
 
 Choose the authentication method that best fits your needs:
 
-### Option 1: OAuth login (Using your Google Account)
+### Option 1: Ollama (Local Model)
+
+**✨ Best for:** Developers who want to run models locally without any external API dependencies
+
+**Benefits:**
+- **Completely offline** - Run models on your local machine
+- **No API costs** - Free to use with your own hardware
+- **Privacy-focused** - All data stays on your machine
+- **Tool support** - Compatible with function calling if the model supports it
+
+#### Setup Ollama and configure environment variables
+
+```bash
+# Set Ollama URL (default: http://localhost:11434/v1)
+export OLLAMA_URL="http://gine:11434/v1"
+
+# Set model name
+export OLLAMA_MODEL="PetrosStav/gemma3-tools:27b"
+
+# Enable tool support if your model supports it
+export OLLAMA_SUPPORTS_TOOLS="true"
+
+# Start Gemini CLI and select "Use Ollama (Local)"
+gemini
+```
+
+### Option 2: OAuth login (Using your Google Account)
 
 **✨ Best for:** Individual developers as well as anyone who has a Gemini Code Assist License. (see [quota limits and terms of service](https://cloud.google.com/gemini/docs/quotas) for details)
 
@@ -96,7 +122,7 @@ export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_NAME"
 gemini
 ```
 
-### Option 2: Gemini API Key
+### Option 3: Gemini API Key
 
 **✨ Best for:** Developers who need specific model control or paid tier access
 
@@ -112,7 +138,7 @@ export GEMINI_API_KEY="YOUR_API_KEY"
 gemini
 ```
 
-### Option 3: Vertex AI
+### Option 4: Vertex AI
 
 **✨ Best for:** Enterprise teams and production workloads
 
