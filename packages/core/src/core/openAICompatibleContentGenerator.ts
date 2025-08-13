@@ -2,6 +2,9 @@
  * @license
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
+ * 
+ * OpenAI-compatible API Content Generator
+ * Supports various OpenAI-compatible APIs including Groq, Ollama, etc.
  */
 
 import {
@@ -105,7 +108,7 @@ interface OpenAIStreamChunk {
   }>;
 }
 
-export class OpenAIContentGenerator implements ContentGenerator {
+export class OpenAICompatibleContentGenerator implements ContentGenerator {
   private apiUrl: string;
   private model: string;
   private apiKey?: string;

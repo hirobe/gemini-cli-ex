@@ -16,9 +16,10 @@ export const validateAuthMethod = (authMethod: string): string | null => {
     return null;
   }
 
-  if (authMethod === AuthType.USE_OLLAMA) {
-    // Ollama doesn't require authentication by default
-    // But we can check if URL is configured if needed
+  if (authMethod === AuthType.USE_GROQ) {
+    if (!process.env.GROQ_API_KEY) {
+      return 'GROQ_API_KEY environment variable not found. Get your API key from https://console.groq.com/keys and add it to your environment (no reload needed if using .env)!';
+    }
     return null;
   }
 

@@ -71,31 +71,34 @@ With Gemini CLI you can:
 
 Choose the authentication method that best fits your needs:
 
-### Option 1: Ollama (Local Model)
+### Option 1: Groq Cloud
 
-**✨ Best for:** Developers who want to run models locally without any external API dependencies
+**✨ Best for:** Developers who want ultra-fast inference with competitive pricing
 
 **Benefits:**
-- **Completely offline** - Run models on your local machine
-- **No API costs** - Free to use with your own hardware
-- **Privacy-focused** - All data stays on your machine
-- **Tool support** - Compatible with function calling if the model supports it
+- **Lightning fast inference** - Industry-leading speed with Groq's LPU technology
+- **Competitive pricing** - Cost-effective compared to other cloud providers
+- **High-quality models** - Access to Llama, Mixtral, and other open models
+- **Simple API** - OpenAI-compatible interface
 
-#### Setup Ollama and configure environment variables
+#### Setup Groq and configure environment variables
 
 ```bash
-# Set Ollama URL (default: http://localhost:11434/v1)
-export OLLAMA_URL="http://gine:11434/v1"
+# Get your API key from https://console.groq.com/keys
+export GROQ_API_KEY="your-api-key-here"
 
-# Set model name
-export OLLAMA_MODEL="PetrosStav/gemma3-tools:27b"
+# Optional: Set model (default: llama-3.3-70b-versatile)
+export GROQ_MODEL="llama-3.3-70b-versatile"
 
-# Enable tool support if your model supports it
-export OLLAMA_SUPPORTS_TOOLS="true"
-
-# Start Gemini CLI and select "Use Ollama (Local)"
+# Start Gemini CLI and select "Use Groq Cloud"
 gemini
 ```
+
+Available models:
+- `llama-3.3-70b-versatile` - Latest Llama 3.3 70B (recommended)
+- `llama-3.2-90b-vision-preview` - Multimodal capable
+- `mixtral-8x7b-32768` - Fast and efficient
+- `gemma2-9b-it` - Google's Gemma 2
 
 ### Option 2: OAuth login (Using your Google Account)
 
