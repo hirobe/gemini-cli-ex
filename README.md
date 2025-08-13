@@ -88,8 +88,8 @@ Choose the authentication method that best fits your needs:
 # Get your API key from https://console.groq.com/keys
 export GROQ_API_KEY="your-api-key-here"
 
-# Optional: Set model (default: llama-3.3-70b-versatile)
-export GROQ_MODEL="llama-3.3-70b-versatile"
+# Optional: Set model (default: openai/gpt-oss-120b)
+export GROQ_MODEL="openai/gpt-oss-120b"
 
 # Start Gemini CLI and select "Use Groq Cloud"
 gemini
@@ -97,7 +97,8 @@ gemini
 
 Available models:
 
-- `llama-3.3-70b-versatile` - Latest Llama 3.3 70B (recommended)
+- `openai/gpt-oss-120b` - OpenAI GPT OSS 120B (default)
+- `llama-3.3-70b-versatile` - Latest Llama 3.3 70B
 - `llama-3.2-90b-vision-preview` - Multimodal capable
 - `mixtral-8x7b-32768` - Fast and efficient
 - `gemma2-9b-it` - Google's Gemma 2

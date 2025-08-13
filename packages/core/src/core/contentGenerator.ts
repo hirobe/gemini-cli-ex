@@ -90,7 +90,7 @@ export function createContentGeneratorConfig(
   if (authType === AuthType.USE_GROQ && groqApiKey) {
     contentGeneratorConfig.groqApiKey = groqApiKey;
     contentGeneratorConfig.model =
-      process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+      process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
     return contentGeneratorConfig;
   }
 
