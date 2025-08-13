@@ -1,11 +1,5 @@
 # Gemini CLI_ex
 
-[![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/npm/v/@google/gemini-cli)](https://www.npmjs.com/package/@google/gemini-cli)
-[![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/google-gemini/gemini-cli/blob/main/LICENSE)
-
-![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
-
 > **Note:** This project is a fork of [google/gemini-cli](https://github.com/google-gemini/gemini-cli) extended to support Groq. The implementation approach references [Riti0208/gemini-cli-local](https://github.com/Riti0208/gemini-cli-local).
 
 Gemini CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.
@@ -28,16 +22,11 @@ npx github:hirobe/gemini-cli-ex
 npm install -g github:hirobe/gemini-cli-ex
 ```
 
-#### System Requirements
-
-- Node.js version 20 or higher
-- macOS, Linux, or Windows
-
 ## 🔐 Authentication Options
 
-Choose the authentication method that best fits your needs:
+You can choose Groq Cloud.
 
-### Option 1: Groq Cloud
+### Groq Cloud
 
 **✨ Best for:** Developers who want ultra-fast inference with competitive pricing
 
@@ -61,25 +50,143 @@ export GROQ_MODEL="openai/gpt-oss-120b"
 gemini
 ```
 
-Available models:
 
-- `openai/gpt-oss-120b` - OpenAI GPT OSS 120B (default)
-- `llama-3.3-70b-versatile` - Latest Llama 3.3 70B
-- `llama-3.2-90b-vision-preview` - Multimodal capable
-- `mixtral-8x7b-32768` - Fast and efficient
-- `gemma2-9b-it` - Google's Gemma 2
+The following is the original README.md.
 
-### Option 2: OAuth login (Using your Google Account)
+---
 
-For details, refer to [google/gemini-cli](https://github.com/google-gemini/gemini-cli).
+# Gemini CLI
 
-### Option 3: Gemini API Key
+[![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/npm/v/@google/gemini-cli)](https://www.npmjs.com/package/@google/gemini-cli)
+[![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/google-gemini/gemini-cli/blob/main/LICENSE)
 
-For details, refer to [google/gemini-cli](https://github.com/google-gemini/gemini-cli).
+![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
 
-### Option 4: Vertex AI
+Gemini CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.
 
-For details, refer to [google/gemini-cli](https://github.com/google-gemini/gemini-cli).
+## 🚀 Why Gemini CLI?
+
+- **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google account
+- **🧠 Powerful Gemini 2.5 Pro**: Access to 1M token context window
+- **🔧 Built-in tools**: Google Search grounding, file operations, shell commands, web fetching
+- **🔌 Extensible**: MCP (Model Context Protocol) support for custom integrations
+- **💻 Terminal-first**: Designed for developers who live in the command line
+- **🛡️ Open source**: Apache 2.0 licensed
+
+## 📦 Installation
+
+### Quick Install
+
+#### Run instantly with npx
+
+```bash
+# Using npx (no installation required)
+npx https://github.com/google-gemini/gemini-cli
+```
+
+#### Install globally with npm
+
+```bash
+npm install -g @google/gemini-cli
+```
+
+#### Install globally with Homebrew (macOS/Linux)
+
+```bash
+brew install gemini-cli
+```
+
+#### System Requirements
+
+- Node.js version 20 or higher
+- macOS, Linux, or Windows
+
+## 📋 Key Features
+
+With Gemini CLI you can:
+
+- **Code Understanding & Generation**
+  - Query and edit large codebases
+  - Generate new apps from PDFs, images, or sketches using multimodal capabilities
+  - Debug issues and troubleshoot with natural language
+- **Automation & Integration**
+  - Automate operational tasks like querying pull requests or handling complex rebases
+  - Use MCP servers to connect new capabilities, including [media generation with Imagen, Veo or Lyria](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
+  - Run non-interactively in scripts for workflow automation
+- **Advanced Capabilities**
+  - Ground your queries with built-in [Google Search](https://ai.google.dev/gemini-api/docs/grounding) for real-time information
+  - Conversation checkpointing to save and resume complex sessions
+  - Custom context files (GEMINI.md) to tailor behavior for your projects
+
+- **🔗 GitHub Integration**
+  - Use the Gemini CLI GitHub Action for automated PR reviews
+  - Automated issue triage and on-demand AI assistance directly in your repositories
+  - Seamless integration with your GitHub workflows
+
+## 🔐 Authentication Options
+
+Choose the authentication method that best fits your needs:
+
+### Option 1: OAuth login (Using your Google Account)
+
+**✨ Best for:** Individual developers as well as anyone who has a Gemini Code Assist License. (see [quota limits and terms of service](https://cloud.google.com/gemini/docs/quotas) for details)
+
+**Benefits:**
+
+- **Free tier**: 60 requests/min and 1,000 requests/day
+- **Gemini 2.5 Pro** with 1M token context window
+- **No API key management** - just sign in with your Google account
+- **Automatic updates** to latest models
+
+#### Start Gemini CLI, then choose OAuth and follow the browser authentication flow when prompted
+
+```bash
+gemini
+```
+
+#### If you are using a paid Code Assist License from your organization, remember to set the Google Cloud Project
+
+```bash
+# Set your Google Cloud Project
+export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_NAME"
+gemini
+```
+
+### Option 2: Gemini API Key
+
+**✨ Best for:** Developers who need specific model control or paid tier access
+
+**Benefits:**
+
+- **Free tier**: 100 requests/day with Gemini 2.5 Pro
+- **Model selection**: Choose specific Gemini models
+- **Usage-based billing**: Upgrade for higher limits when needed
+
+```bash
+# Get your key from https://aistudio.google.com/apikey
+export GEMINI_API_KEY="YOUR_API_KEY"
+gemini
+```
+
+### Option 3: Vertex AI
+
+**✨ Best for:** Enterprise teams and production workloads
+
+**Benefits:**
+
+- **Enterprise features**: Advanced security and compliance
+- **Scalable**: Higher rate limits with billing account
+- **Integration**: Works with existing Google Cloud infrastructure
+
+```bash
+# Get your key from Google Cloud Console
+export GOOGLE_API_KEY="YOUR_API_KEY"
+export GOOGLE_GENAI_USE_VERTEXAI=true
+gemini
+```
+
+For Google Workspace accounts and other authentication methods, see the [authentication guide](./docs/cli/authentication.md).
 
 ## 🚀 Getting Started
 
@@ -128,7 +235,12 @@ gemini
 
 ## 🔗 GitHub Integration
 
-Not implemented in this fork.
+Integrate Gemini CLI directly into your GitHub workflows with the [**Gemini CLI GitHub Action**](https://github.com/google-github-actions/run-gemini-cli). Key features include:
+
+- **Pull Request Reviews**: Automatically review pull requests when they're opened.
+- **Issue Triage**: Automatically triage and label GitHub issues.
+- **On-demand Collaboration**: Mention `@gemini-cli` in issues and pull requests for assistance and task delegation.
+- **Custom Workflows**: Set up your own scheduled tasks and event-driven automations.
 
 ## 📚 Documentation
 
