@@ -2,9 +2,6 @@
  * @license
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
- *
- * OpenAI-compatible API Content Generator
- * Supports various OpenAI-compatible APIs including Groq, Ollama, etc.
  */
 
 import {
@@ -51,7 +48,7 @@ interface OpenAIRequest {
     function: {
       name: string;
       description?: string;
-      parameters?: any;
+      parameters?: Record<string, unknown>;
     };
   }>;
 }
@@ -134,7 +131,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     if (typeof content === 'string') {
       messages.push({
         role: 'user',
-        content: content,
+        content,
       });
       return messages;
     }
@@ -144,7 +141,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     for (const item of contentArray) {
       // Type guard to check if it's a Content object
       if (typeof item === 'object' && 'role' in item && 'parts' in item) {
-        const role = item.role === 'model' ? 'assistant' : (item.role as any);
+        const role = item.role === 'model' ? 'assistant' : (item.role as string);
 
         if (!item.parts || item.parts.length === 0) {
           continue;
@@ -188,8 +185,8 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
 
   private createGenerateContentResponse(
     candidates: Candidate[],
-    promptFeedback: any,
-    usageMetadata?: any,
+    promptFeedback: unknown,
+    usageMetadata?: unknown,
   ): GenerateContentResponse {
     const response = new GenerateContentResponse();
     response.candidates = candidates;
@@ -249,7 +246,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
 
   async generateContent(
     request: GenerateContentParameters,
-    userPromptId: string,
+    _userPromptId: string,
   ): Promise<GenerateContentResponse> {
     const messages = this.convertContentToOpenAI(request.contents);
 
@@ -322,7 +319,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
 
   private async *doGenerateContentStream(
     request: GenerateContentParameters,
-    userPromptId: string,
+    _userPromptId: string,
   ): AsyncGenerator<GenerateContentResponse> {
     const messages = this.convertContentToOpenAI(request.contents);
 
@@ -390,7 +387,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     const decoder = new TextDecoder();
     let buffer = '';
     let accumulatedContent = '';
-    const toolCalls: Map<number, any> = new Map();
+    const toolCalls: Map<number, OpenAIMessage['tool_calls'][0]> = new Map();
 
     while (true) {
       const { done, value } = await reader.read();
@@ -501,7 +498,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
         .filter((c): c is Content => typeof c === 'object' && 'parts' in c)
         .map((c) =>
           c.parts
-            ? c.parts.map((p: any) => ('text' in p ? p.text : '')).join(' ')
+            ? c.parts.map((p: Part) => ('text' in p ? p.text : '')).join(' ')
             : '',
         )
         .join(' ');
@@ -511,7 +508,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     ) {
       text = request.contents.parts
         ? request.contents.parts
-            .map((p: any) => ('text' in p ? p.text : ''))
+            .map((p: Part) => ('text' in p ? p.text : ''))
             .join(' ')
         : '';
     }
@@ -525,7 +522,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
   }
 
   async embedContent(
-    request: EmbedContentParameters,
+    _request: EmbedContentParameters,
   ): Promise<EmbedContentResponse> {
     throw new Error('Embeddings not supported for OpenAI-compatible API');
   }
