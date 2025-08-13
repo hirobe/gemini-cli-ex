@@ -7,6 +7,7 @@
 import {
   CountTokensResponse,
   GenerateContentResponse,
+  GenerateContentResponsePromptFeedback,
   GenerateContentParameters,
   CountTokensParameters,
   EmbedContentResponse,
@@ -193,7 +194,9 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
   ): GenerateContentResponse {
     const response = new GenerateContentResponse();
     response.candidates = candidates;
-    response.promptFeedback = promptFeedback as any;
+    response.promptFeedback = promptFeedback as
+      | GenerateContentResponsePromptFeedback
+      | undefined;
     if (usageMetadata) {
       response.usageMetadata = usageMetadata;
     }
