@@ -48,7 +48,6 @@ export GROQ_MODEL="openai/gpt-oss-120b"
 gemini
 ```
 
-
 The following is the original README.md.
 
 ---
