@@ -19,6 +19,7 @@ import { Config } from '../config/config.js';
 import { getEffectiveModel } from './modelCheck.js';
 import { UserTierId } from '../code_assist/types.js';
 import { LoggingContentGenerator } from './loggingContentGenerator.js';
+import { OpenAICompatibleContentGenerator } from './openAICompatibleContentGenerator.js';
 
 /**
  * Interface abstracting the core functionalities for generating content and counting tokens.
@@ -46,6 +47,7 @@ export enum AuthType {
   USE_GEMINI = 'gemini-api-key',
   USE_VERTEX_AI = 'vertex-ai',
   CLOUD_SHELL = 'cloud-shell',
+  USE_GROQ = 'groq',
 }
 
 export type ContentGeneratorConfig = {
@@ -54,6 +56,8 @@ export type ContentGeneratorConfig = {
   vertexai?: boolean;
   authType?: AuthType | undefined;
   proxy?: string | undefined;
+  groqApiKey?: string;
+  groqModel?: string;
 };
 
 export function createContentGeneratorConfig(
@@ -64,6 +68,7 @@ export function createContentGeneratorConfig(
   const googleApiKey = process.env.GOOGLE_API_KEY || undefined;
   const googleCloudProject = process.env.GOOGLE_CLOUD_PROJECT || undefined;
   const googleCloudLocation = process.env.GOOGLE_CLOUD_LOCATION || undefined;
+  const groqApiKey = process.env.GROQ_API_KEY || undefined;
 
   // Use runtime model from config if available; otherwise, fall back to parameter or default
   const effectiveModel = config.getModel() || DEFAULT_GEMINI_MODEL;
@@ -79,6 +84,13 @@ export function createContentGeneratorConfig(
     authType === AuthType.LOGIN_WITH_GOOGLE ||
     authType === AuthType.CLOUD_SHELL
   ) {
+    return contentGeneratorConfig;
+  }
+
+  if (authType === AuthType.USE_GROQ && groqApiKey) {
+    contentGeneratorConfig.groqApiKey = groqApiKey;
+    contentGeneratorConfig.model =
+      process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
     return contentGeneratorConfig;
   }
 
@@ -118,6 +130,17 @@ export async function createContentGenerator(
       'User-Agent': `GeminiCLI/${version} (${process.platform}; ${process.arch})`,
     },
   };
+
+  if (config.authType === AuthType.USE_GROQ) {
+    const openAICompatibleGenerator = new OpenAICompatibleContentGenerator({
+      apiUrl: 'https://api.groq.com/openai/v1',
+      model: config.model,
+      apiKey: config.groqApiKey,
+      supportsTools: false, // Groq doesn't support function calling yet in OpenAI compatibility mode
+    });
+    return new LoggingContentGenerator(openAICompatibleGenerator, gcConfig);
+  }
+
   if (
     config.authType === AuthType.LOGIN_WITH_GOOGLE ||
     config.authType === AuthType.CLOUD_SHELL

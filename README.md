@@ -1,3 +1,57 @@
+# Gemini CLI_ex
+
+This project is a fork of [google/gemini-cli](https://github.com/google-gemini/gemini-cli) extended to support Groq. The implementation approach references [Riti0208/gemini-cli-local](https://github.com/Riti0208/gemini-cli-local).
+
+## 📦 Installation
+
+### Quick Install
+
+#### Run instantly with npx
+
+```bash
+# Using npx (no installation required) - Groq-enabled version
+npx github:hirobe/gemini-cli-ex
+```
+
+#### Install globally with npm
+
+```bash
+# Install the Groq-enabled version
+npm install -g github:hirobe/gemini-cli-ex
+```
+
+## 🔐 Authentication Options
+
+You can choose Groq Cloud.
+
+### Groq Cloud
+
+**✨ Best for:** Developers who want ultra-fast inference with competitive pricing
+
+**Benefits:**
+
+- **Lightning fast inference** - Industry-leading speed with Groq's LPU technology
+- **Competitive pricing** - Cost-effective compared to other cloud providers
+- **High-quality models** - Access to Llama, Mixtral, and other open models
+- **Simple API** - OpenAI-compatible interface
+
+#### Setup Groq and configure environment variables
+
+```bash
+# Get your API key from https://console.groq.com/keys
+export GROQ_API_KEY="your-api-key-here"
+
+# Optional: Set model (default: openai/gpt-oss-120b)
+export GROQ_MODEL="openai/gpt-oss-120b"
+
+# Start Gemini CLI and select "Use Groq Cloud"
+gemini
+```
+
+The following is the original README.md.
+
+---
+
 # Gemini CLI
 
 [![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)

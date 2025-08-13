@@ -78,6 +78,7 @@ export function AuthDialog({
       value: AuthType.USE_GEMINI,
     },
     { label: 'Vertex AI', value: AuthType.USE_VERTEX_AI },
+    { label: 'Use Groq Cloud', value: AuthType.USE_GROQ },
   ];
 
   const initialAuthIndex = items.findIndex((item) => {

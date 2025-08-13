@@ -16,6 +16,13 @@ export const validateAuthMethod = (authMethod: string): string | null => {
     return null;
   }
 
+  if (authMethod === AuthType.USE_GROQ) {
+    if (!process.env.GROQ_API_KEY) {
+      return 'GROQ_API_KEY environment variable not found. Get your API key from https://console.groq.com/keys and add it to your environment (no reload needed if using .env)!';
+    }
+    return null;
+  }
+
   if (authMethod === AuthType.USE_GEMINI) {
     if (!process.env.GEMINI_API_KEY) {
       return 'GEMINI_API_KEY environment variable not found. Add that to your environment and try again (no reload needed if using .env)!';
