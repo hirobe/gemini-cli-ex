@@ -142,7 +142,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
       // Type guard to check if it's a Content object
       if (typeof item === 'object' && 'role' in item && 'parts' in item) {
         const role =
-          item.role === 'model' ? 'assistant' : (item.role as string);
+          item.role === 'model' ? 'assistant' : (item.role as 'system' | 'user' | 'assistant' | 'tool');
 
         if (!item.parts || item.parts.length === 0) {
           continue;
@@ -191,7 +191,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
   ): GenerateContentResponse {
     const response = new GenerateContentResponse();
     response.candidates = candidates;
-    response.promptFeedback = promptFeedback;
+    response.promptFeedback = promptFeedback as any;
     if (usageMetadata) {
       response.usageMetadata = usageMetadata;
     }
@@ -278,7 +278,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
                 function: {
                   name: func.name || '',
                   description: func.description || '',
-                  parameters: func.parameters,
+                  parameters: func.parameters as Record<string, unknown> | undefined,
                 },
               });
             }
@@ -351,7 +351,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
                 function: {
                   name: func.name || '',
                   description: func.description || '',
-                  parameters: func.parameters,
+                  parameters: func.parameters as Record<string, unknown> | undefined,
                 },
               });
             }
@@ -388,7 +388,7 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
     const decoder = new TextDecoder();
     let buffer = '';
     let accumulatedContent = '';
-    const toolCalls: Map<number, OpenAIMessage['tool_calls'][0]> = new Map();
+    const toolCalls: Map<number, NonNullable<OpenAIMessage['tool_calls']>[0]> = new Map();
 
     while (true) {
       const { done, value } = await reader.read();
@@ -439,11 +439,13 @@ export class OpenAICompatibleContentGenerator implements ContentGenerator {
                   }
 
                   const existing = toolCalls.get(toolCall.index);
-                  if (toolCall.function?.name) {
-                    existing.function.name = toolCall.function.name;
-                  }
-                  if (toolCall.function?.arguments) {
-                    existing.function.arguments += toolCall.function.arguments;
+                  if (existing) {
+                    if (toolCall.function?.name) {
+                      existing.function.name = toolCall.function.name;
+                    }
+                    if (toolCall.function?.arguments) {
+                      existing.function.arguments += toolCall.function.arguments;
+                    }
                   }
                 }
               }
